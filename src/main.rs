@@ -97,7 +97,7 @@ struct ResetArgs {
 /// Returns a hint for the given exercise
 struct HintArgs {
     #[argh(positional)]
-    /// the name of the exercise
+    ///dad
     name: String,
 }
 

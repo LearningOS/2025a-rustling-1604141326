@@ -22,6 +22,8 @@ fn temp_file() -> String {
         .filter(|c| c.is_alphanumeric())
         .collect();
 
+ //adada
+ 
     format!("./temp_{}_{thread_id}", process::id())
 }
 
