@@ -22,7 +22,7 @@
 
 #[derive(PartialEq, Debug)]
 pub enum List {
-    Cons(i32, List),
+    Cons(i32, Box<List>), // Wrap List in Box to fix recursive type
     Nil,
 }
 
@@ -35,11 +35,11 @@ fn main() {
 }
 
 pub fn create_empty_list() -> List {
-    todo!()
+    List::Nil // Empty list is just Nil
 }
 
 pub fn create_non_empty_list() -> List {
-    todo!()
+    List::Cons(1, Box::new(List::Cons(2, Box::new(List::Nil)))) // Example: [1, 2]
 }
 
 #[cfg(test)]
