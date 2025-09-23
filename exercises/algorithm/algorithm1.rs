@@ -6,7 +6,7 @@
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
-use std::vec::*;
+
 
 #[derive(Debug)]
 struct Node<T> {
@@ -29,19 +29,19 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: Clone> Default for LinkedList<T> {
     fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl<T> LinkedList<T> {
-    pub fn new() -> Self {
         Self {
             length: 0,
             start: None,
             end: None,
         }
+    }
+}
+
+impl<T: Clone> LinkedList<T> {
+    pub fn new() -> Self {
+        Self::default()
     }
 
     pub fn add(&mut self, obj: T) {
@@ -69,15 +69,50 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+    pub fn merge( list_a: LinkedList<T>,  list_b: LinkedList<T>) -> Self
+    where
+        T: PartialOrd,
+    {
+        let mut merged_list = LinkedList::new();
+        
+        // Get the first nodes from both lists
+        let mut a_ptr = list_a.start;
+        let mut b_ptr = list_b.start;
+        
+        while a_ptr.is_some() || b_ptr.is_some() {
+            let next_node = match (a_ptr, b_ptr) {
+                (Some(a), Some(b)) => {
+                    let a_val = unsafe { &(*a.as_ptr()).val };
+                    let b_val = unsafe { &(*b.as_ptr()).val };
+                    
+                    if a_val <= b_val {
+                        a_ptr = unsafe { (*a.as_ptr()).next };
+                        Some(a)
+                    } else {
+                        b_ptr = unsafe { (*b.as_ptr()).next };
+                        Some(b)
+                    }
+                }
+                (Some(a), None) => {
+                    a_ptr = unsafe { (*a.as_ptr()).next };
+                    Some(a)
+                }
+                (None, Some(b)) => {
+                    b_ptr = unsafe { (*b.as_ptr()).next };
+                    Some(b)
+                }
+                (None, None) => None,
+            };
+            
+            if let Some(node_ptr) = next_node {
+                // Create a new node with the same value
+                let val = unsafe { (*node_ptr.as_ptr()).val.clone()};
+                merged_list.add(val);
+            }
         }
-	}
+        
+        merged_list
+    }
 }
 
 impl<T> Display for LinkedList<T>
