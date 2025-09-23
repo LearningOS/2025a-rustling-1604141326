@@ -16,6 +16,7 @@ pub fn foo_if_fizz(fizzish: &str) -> &str {
     }
 }
 
+
 // No test changes needed!
 #[cfg(test)]
 mod tests {
